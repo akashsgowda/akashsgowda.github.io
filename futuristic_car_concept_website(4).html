@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMBER — Futuristic Linux Machine</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #c44f18 0%, #8e3510 45%, #4a1804 100%);
+      color: #f5f5f5;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 60px;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+    }
+
+    nav { display: flex; gap: 48px; }
+
+    nav a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      position: relative;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #fff;
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover::after { width: 100%; }
+
+    .login { opacity: 0.6; }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    .hero-title {
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 700;
+  letter-spacing: 6px;
+  margin-bottom: 14px;
+}
+
+.hero-tagline {
+  max-width: 720px;
+  font-size: 1.15rem;
+  opacity: 0.85;
+  line-height: 1.7;
+  margin-bottom: 50px;
+}
+
+    .laptop {
+      margin-top: 70px;
+      width: min(820px, 90%);
+      filter: drop-shadow(0 40px 60px rgba(0,0,0,0.6));
+    }
+
+    .terminal-container { margin-top: 50px; width: min(720px, 90%); }
+
+    .terminal {
+      position: relative;
+      background: #0a0a0a;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+      overflow: hidden;
+      text-align: left;
+      font-family: monospace;
+    }
+
+    .terminal-bar {
+      height: 34px;
+      background: #111;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .red { background: #ff5f56; }
+    .yellow { background: #ffbd2e; }
+    .green { background: #27c93f; }
+
+    .terminal-body {
+      padding: 18px 20px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #00ff9c;
+      min-height: 180px;
+      white-space: pre-wrap;
+      position: relative;
+      z-index: 2;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: #00ff9c;
+      margin-left: 4px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink { 0%,50%{opacity:1;} 51%,100%{opacity:0;} }
+
+    .terminal img {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    canvas#matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.15;
+    }
+
+    .actions {
+      margin-top: 40px;
+      display: flex;
+      gap: 28px;
+    }
+
+    .actions button {
+      padding: 16px 34px;
+      font-size: 0.9rem;
+      letter-spacing: 1.5px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: linear-gradient(180deg, #1a1a1a, #000);
+      color: #f5f5f5;
+      cursor: pointer;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+    }
+
+    .content {
+      max-width: 1100px;
+      margin: 120px auto 80px;
+      padding: 0 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 40px;
+    }
+
+    .card {
+      background: rgba(0,0,0,0.32);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    }
+
+    footer { text-align: center; padding-bottom: 30px; font-size: 0.75rem; opacity: 0.5; }
+
+    @media (max-width: 700px) { nav { display: none; } }
+  </style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+
+<header>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Features</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </nav>
+  <div class="login">Login</div>
+</header>
+
+<section class="hero">
+  <h1 class="hero-title">EMBER OS</h1>
+  <p class="hero-tagline">A hardened, minimalist Linux operating system engineered for builders, hackers, and power users who demand speed, privacy, and absolute control.</p>
+
+  <div class="terminal-container">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+      <div class="terminal-body" id="terminal"></div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button>EXPLORE SYSTEM</button>
+    <button>DEPLOY NOW</button>
+  </div>
+</section>
+
+<section class="content" style="margin-top:160px;">
+  <div class="card" style="min-height:220px; display:flex; flex-direction:column; justify-content:center;">
+    <h3>Command Everything</h3>
+    <p>EMBER is engineered for terminal-first operators. Every process, packet, and permission is visible, traceable, and under your command.</p>
+  </div>
+  <div class="card" style="min-height:220px; display:flex; flex-direction:column; justify-content:center;">
+    <h3>Security Is the Default</h3>
+    <p>From full-disk encryption to hardened kernels and isolated execution layers — EMBER assumes threats exist and neutralizes them by design.</p>
+  </div>
+  <div class="card" style="min-height:220px; display:flex; flex-direction:column; justify-content:center;">
+    <h3>Built to Disappear</h3>
+    <p>No telemetry. No noise. No corporate fingerprints. Just a clean Linux machine that does exactly what you tell it to — nothing more.</p>
+  </div>
+</section>
+
+<footer>© 2045 EMBER — Futuristic Linux Concept</footer>
+
+<script>
+  /* MATRIX BACKGROUND */
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const letters = '01#@$%&*abcdefghijklmnopqrstuvwxyz';
+  const fontSize = 14;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = Array(columns).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ff9c';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 33);
+
+  /* AUTO TERMINAL BOOT (NO INTERACTION) */
+  const terminal = document.getElementById('terminal');
+  const bootLines = [
+    'root@ember:~$ booting EMBER Linux...',
+    '[ OK ] Mounting encrypted volumes',
+    '[ OK ] Loading kernel modules',
+    '[ OK ] Initializing network cloak',
+    '[ OK ] Starting secure shell',
+    '',
+    'root@ember:~$ neofetch',
+    'OS: EMBER Linux x86_64',
+    'Kernel: 6.x hardened',
+    'Shell: zsh',
+    'Memory: 32GB',
+    '',
+    'root@ember:~$ ',
+  ];
+
+  let line = 0;
+  let char = 0;
+
+  function typeBoot() {
+    if (line < bootLines.length) {
+      if (char < bootLines[line].length) {
+        terminal.innerHTML += bootLines[line][char++];
+        setTimeout(typeBoot, 28);
+      } else {
+        terminal.innerHTML += '\n';
+        line++; char = 0;
+        setTimeout(typeBoot, 220);
+      }
+    } else {
+      terminal.innerHTML += '<span class="cursor"></span>';
+    }
+  }
+
+  terminal.innerHTML = '';
+  typeBoot();
+</script>
+
+</body>
+</html>
